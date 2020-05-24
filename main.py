@@ -1,6 +1,8 @@
 from check import (createRowList, createColumnList,
-                   createTaileList, checkBoard, isNumUnique, copyBoard, createRandomPosition)
+                   createTaileList, isBoardComplete,
+                   isNumUnique, copyBoard, createRandomPosition)
 from board import displayBoard
+from input import userInput
 from random import randrange
 
 Board = []
@@ -31,7 +33,7 @@ def solveSudoku(board):
                 position = (row, column)
                 if isNumUnique(board, position, value):
                     board[row][column] = str(value)
-                    if checkBoard(board):
+                    if isBoardComplete(board):
                         return True
                     else:
                         if solveSudoku(board):
@@ -44,7 +46,7 @@ def removePositions(board):
     i = 0
     tempBoard = []
 
-    while i < 30:
+    while i < 3:
         randomPosition = createRandomPosition()
         randomRow = randomPosition[0]
         randomColumn = randomPosition[1]
@@ -62,24 +64,40 @@ def removePositions(board):
 
 
 def init():
-    global Board
-    while True:
-        global loading
-        createRandomBoard(Board)
+    global Board, loading
+    gameOver = False
+
+    createRandomBoard(Board)
+    loading += "."
+    print(loading)
+
+    if solveSudoku(Board):
+        print("Game loaded!")
+        removePositions(Board)
+
+        while not (isBoardComplete(Board) and gameOver):
+            displayBoard(Board)
+            result = userInput(Board)
+
+            if isBoardComplete(Board):
+                if "IncorrectMove" in result:
+                    print(
+                        "Opss.. Something is not correct! Check it again and make your board Sodoku!!")
+                else:
+                    gameOver = True
+                    break
+    else:
         loading += "."
         print(loading)
-        solved = solveSudoku(Board)
-        if solved:
-            print("Game loaded!")
-            removePositions(Board)
-            displayBoard(Board)
-            break
-        else:
-            loading += "."
-            print(loading)
-            Board = [["_" for i in range(9)] for j in range(9)]
+        Board = [["_" for i in range(9)] for j in range(9)]
+        init()
 
 
 init()
 
-# print("Thanks for playing!!!")
+print()
+seperateLine = "=" * 55
+print(seperateLine)
+print("Congrats! This is a Sodoku!!")
+displayBoard(Board)
+print("Thanks for playing!!!")
