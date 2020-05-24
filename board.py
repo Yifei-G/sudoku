@@ -12,7 +12,7 @@ def displayBoard(board):
 		# Use iterate 9 elements of each row
 		for item in rows:
 			# concadenate all the data
-			dataLine += "|  " + str(item) + "  "
+			dataLine += "|  " + item + "  "
 		else:
 			dataLine += "|"
 			# print the data after the itaration
