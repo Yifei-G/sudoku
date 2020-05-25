@@ -1,6 +1,7 @@
 from board import displayBoard
-from check import isNumUnique
+from check import isNumUnique, isBoardComplete
 checkList = []
+editableList = []
 
 
 def userInput(board):
@@ -21,16 +22,32 @@ def userInput(board):
         columnNum = inputColumn - 1
         userPosition = (rowNum, columnNum)
 
-        if isNumUnique(board, userPosition, userData):
-            print("The number is unique")
-            checkList.append("CorrectMove")
+        if (board[rowNum][columnNum] != "_") and (userPosition not in editableList):
+            print("You can't modify pre-defined numbers!")
         else:
-            print("The number is not unique")
-            checkList.append("IncorrectMove")
+            if not isBoardComplete(board):
+                    # the board is not complete
+                if isNumUnique(board, userPosition, userData):
+                    checkList.append("CorrectMove")
+                else:
+                    checkList.append("IncorrectMove")
+            else:
+                    # the board is completed but with error
+                if isNumUnique(board, userPosition, userData):
+                    # remove 1 IncorrectMove from the check list
+                    checkList.remove("IncorrectMove")
+                    checkList.append("CorrectMove")
+                else:
+                    # in case user has made more errors, add 1
+                    # IncorrectMove
+                    checkList.append("IncorrectMove")
+                    checkList.remove("CorrectMove")
 
-        board[rowNum][columnNum] = userData
+            if userPosition not in editableList:
+                editableList.append(userPosition)
 
-        return checkList
+            board[rowNum][columnNum] = userData
+            return checkList
 
     except ValueError:
         print("You have entered an invalid row or column number. Please enter only NUMBER between 1-9\n")
