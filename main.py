@@ -80,7 +80,9 @@ def init():
             result = userInput(Board)
 
             if isBoardComplete(Board):
-                if "IncorrectMove" in result:
+                if not result:
+                    continue
+                elif "IncorrectMove" in result:
                     print(
                         "Opss.. Something is not correct! Check it again and make your board Sodoku!!")
                 else:
