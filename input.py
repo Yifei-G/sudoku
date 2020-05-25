@@ -22,9 +22,15 @@ def userInput(board):
         columnNum = inputColumn - 1
         userPosition = (rowNum, columnNum)
 
+        # Check if user is trying to modify a pre-defined number or not.
+        # We only want user to modify empty grid (which the initial value is always "_")
+        # After the empty grid has been modified,
+        # we put its position to the editable list, in case user needs to
+        # modify the value in the future.
         if (board[rowNum][columnNum] != "_") and (userPosition not in editableList):
             print("You can't modify pre-defined numbers!")
         else:
+            # TODO: correct the following verfication logic
             if not isBoardComplete(board):
                     # the board is not complete
                 if isNumUnique(board, userPosition, userData):
@@ -42,7 +48,7 @@ def userInput(board):
                     # IncorrectMove
                     checkList.append("IncorrectMove")
                     checkList.remove("CorrectMove")
-
+            # add this position to the editable list
             if userPosition not in editableList:
                 editableList.append(userPosition)
 
