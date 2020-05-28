@@ -1,11 +1,13 @@
 from board import displayBoard
 from check import isNumUnique, isBoardComplete
-checkList = []
+userSolution = {}
 editableList = []
+isSudoku = False
 
 
-def userInput(board):
+def userInput(board, solution):
     try:
+        global isSudoku
         inputRow = int(
             input("Please select between 1-9 the number of the row:"))
         assert (inputRow > 0 and inputRow <= 9)
@@ -30,34 +32,25 @@ def userInput(board):
         if (board[rowNum][columnNum] != "_") and (userPosition not in editableList):
             print("You can't modify pre-defined numbers!")
         else:
-            # TODO: correct the following verfication logic
-            if not isBoardComplete(board):
-                    # the board is not complete
-                if isNumUnique(board, userPosition, userData):
-                    checkList.append("CorrectMove")
-                else:
-                    checkList.append("IncorrectMove")
-            else:
-                    # the board is completed but with error
-                if isNumUnique(board, userPosition, userData):
-                    # remove 1 IncorrectMove from the check list
-                    checkList.remove("IncorrectMove")
-                    checkList.append("CorrectMove")
-                else:
-                    # in case user has made more errors, add 1
-                    # IncorrectMove
-                    checkList.append("IncorrectMove")
-                    checkList.remove("CorrectMove")
             # add this position to the editable list
             if userPosition not in editableList:
                 editableList.append(userPosition)
+            # add user's number into the user solution dict
+            userSolution[userPosition] = userData
 
             board[rowNum][columnNum] = userData
-            return checkList
+
+            # if the boad is completed, compare user's solution with the actual solution. If both dicts are the same
+            # The board is Sudoku
+            if isBoardComplete(board):
+                if userSolution == solution:
+                    isSudoku = True
+
+            return isSudoku
 
     except ValueError:
         print("You have entered an invalid row or column number. Please enter only NUMBER between 1-9\n")
-        userInput(board)
+        userInput(board, solution)
     except AssertionError:
         print("You have entered an invalid number, please only enter only NUMBER between 1-9\n")
-        userInput(board)
+        userInput(board, solution)
