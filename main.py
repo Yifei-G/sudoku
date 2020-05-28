@@ -7,12 +7,13 @@ from random import randrange
 
 Board = []
 Board = [["_" for i in range(9)] for j in range(9)]
+solution = {}
 loading = "Loading.."
 
 
 def createRandomBoard(board):
     i = 0
-    while i < 30:
+    while i < 25:
         randomPosition = createRandomPosition()
         randomValue = randrange(1, 10)
         if isNumUnique(board, randomPosition, randomValue):
@@ -46,13 +47,15 @@ def removePositions(board):
     i = 0
     tempBoard = []
 
-    while i < 3:
+    while i < 30:
         randomPosition = createRandomPosition()
         randomRow = randomPosition[0]
         randomColumn = randomPosition[1]
+        randomPosition = (randomRow, randomColumn)
         if board[randomRow][randomColumn] != "_":
             origialValue = board[randomRow][randomColumn]
             tempBoard = copyBoard(board)
+            solution[randomPosition] = origialValue
             tempBoard[randomRow][randomColumn] = "_"
             if solveSudoku(tempBoard):
                 board[randomRow][randomColumn] = "_"
@@ -60,7 +63,9 @@ def removePositions(board):
             else:
                 print("The value can't be extacted!")
                 board[randomRow][randomColumn] = origialValue
-    displayBoard(tempBoard)
+
+    # display the completed board for testing purpose
+    # displayBoard(tempBoard)
 
 
 def init():
@@ -77,17 +82,12 @@ def init():
 
         while not (isBoardComplete(Board) and gameOver):
             displayBoard(Board)
-            result = userInput(Board)
-
+            gameOver = userInput(Board, solution)
             if isBoardComplete(Board):
-                if not result:
-                    continue
-                elif "IncorrectMove" in result:
+                if not gameOver:
                     print(
-                        "Opss.. Something is not correct! Check it again and make your board Sodoku!!")
-                else:
-                    gameOver = True
-                    break
+                        "Opsss Something went wrong! Please check your board again and make it SUDOKU!")
+
     else:
         loading += "."
         print(loading)
